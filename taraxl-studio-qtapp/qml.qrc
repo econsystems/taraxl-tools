@@ -1,0 +1,15 @@
+<RCC>
+    <qresource prefix="/">
+        <file>main.qml</file>
+        <file>TitleBar.qml</file>
+        <file>ImageButton.qml</file>
+        <file>main.cpp</file>
+        <file>images/close.png</file>
+        <file>SettingsPane.qml</file>
+        <file>CamSelector.qml</file>
+        <file>images/dropDownArrow.png</file>
+        <file>images/collapseArrow.png</file>
+        <file>images/device_box.png</file>
+        <file>images/taraXLStudio.ico</file>
+    </qresource>
+</RCC>
