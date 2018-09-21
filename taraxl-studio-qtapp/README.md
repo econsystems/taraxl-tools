@@ -19,6 +19,7 @@ Open a terminal and build the package:
 
     git clone https://github.com/econsystems/taraxl-tools.git
     cd taraxl-tools/taraxl-studio-qtapp
+    export QT_SELECT=5
     qmake
     make
 

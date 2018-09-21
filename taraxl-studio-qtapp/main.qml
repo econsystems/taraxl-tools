@@ -174,6 +174,7 @@ Window {
         onCamSelected: {
 
             cam.connectCamera(index)
+            cam.setAccuracyMode(true)
         }
 
         onResolutionChanged: {
