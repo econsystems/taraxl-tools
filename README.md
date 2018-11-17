@@ -10,6 +10,8 @@ https://www.e-consystems.com/3d-usb-stereo-camera-with-nvidia-accelerated-sdk.as
 The taraxl tools demonstrates the API feature and code.
 1. **taraxl-studio-qtapp** – With this tool you can quickly access the depth map, configure brightness and exposure settings, modify algorithm settings and much more.
 2. **console-savedepth-app** – With this tool you can quickly save the depth map in a image format.
+3. **taraxl-pointcloud-app** - With this tool, you can view and save the different qualities of pointclouds.
+4. **taraxl-imu-viewer** - This tools helps you to view the IMU values in a graphical format.
 
 ## Getting started
 
