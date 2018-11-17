@@ -1,6 +1,6 @@
 # TaraXL IMU – An IMU application using TaraXL SDK
 
-TaraXL SDK provides high level APIs to get values from accelerometer and gyroscope. This tool retrieves pose data from the inbuilt IMU sensor and a simple graph is plotted to visualize the IMU values.
+TaraXL SDK provides high level APIs to get values from accelerometer and gyroscope. This tool retrieves pose data from the inbuilt IMU sensor and a graph is plotted to visualize the IMU values.
 
 ## Prerequisites
 
@@ -11,7 +11,7 @@ TaraXL SDK provides high level APIs to get values from accelerometer and gyrosco
 ## Getting started
 
 1. Download the latest version of the TaraXL SDK at https://developer.e-consystems.com
-2. Install the TaraXL SDK on NVIDIA TX2 device.
+2. Install the TaraXL SDK on NVIDIA TX2/ Ubuntu x86 device.
 
 ## Build the application
 
