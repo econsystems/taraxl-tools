@@ -27,5 +27,5 @@ Open a terminal and build the package:
 
 To run the TaraXL pointcloud application, connect the TaraXL camera to device and execute the following command
 
-    ./taraxlIMU
+    sudo ./taraxlIMU
 
