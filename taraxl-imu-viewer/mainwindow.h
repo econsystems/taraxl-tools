@@ -23,10 +23,9 @@ public:
     explicit MainWindow(QWidget *parent = nullptr);
     ~MainWindow();
     void setupGraphs(QCustomPlot *customPlot,QCustomPlot *customPlot2,QCustomPlot *customPlot3);
-     int i=0;
+     
 
 private slots:
-  //void realtimeDataSlot(TaraXLSDK::TaraXLPoseTracking *taraxlpose,TaraXLSDK::TaraXLIMUData data);
   void realtimeDataSlot();
   void on_actionPlay_triggered();
  void on_actionPause_triggered();
@@ -34,8 +33,8 @@ private slots:
 private:
     Ui::MainWindow *ui;
     QTimer dataTimer;
-    int k=0;
-    QLabel* label1 = new QLabel;
+    int isPaussed=0;
+    QLabel* heading = new QLabel;
 
 TaraXL taraxlCam;
   TaraXLCam selectedCam;
