@@ -265,7 +265,6 @@ void camera::previewThread() {
         }
         pthread_mutex_unlock(&g_mtx);
 
-	disp0.convertTo(disp0, CV_8UC1);
         applyColorMap(disp0, disp1, COLORMAP_JET);
         setLeftImage(left);
         setRightImage(right);
