@@ -151,7 +151,7 @@ int main () {
       delete taraxlDepth;
       return 1;
   }
-
+  grayDisp.convertTo(grayDisp,CV_8U);
   applyColorMap(grayDisp, colorDisp, COLORMAP_JET);
 
   imwrite("../left.jpg", left);
