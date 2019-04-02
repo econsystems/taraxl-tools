@@ -4,14 +4,14 @@ This tool retrieves pointcloud using TaraXL APIs and displays it in a pointcloud
 
 ## Prerequisites
 
-- Ubuntu 16.04
+- Ubuntu 16.04/18.04
 - TaraXL SDK
-- Cuda9.0
+- Cuda9.0/10.0
 
 ## Getting started
 
 1. Download the latest version of the TaraXL SDK at https://developer.e-consystems.com
-2. Install the TaraXL SDK on NVIDIA TX2/ Ubuntu x86 PC device.
+2. Install the TaraXL SDK on NVIDIA TX2/Xavier Ubuntu x86 PC device.
 
 ## Build the application
 
@@ -27,10 +27,15 @@ Open a terminal and build the package:
 
 To run the TaraXL pointcloud application, connect the TaraXL camera to device and execute the following command
 
+For NVIDIA Jetson TX2 : 
+
     sudo ./PCLSample
+For NVIDIA Jetson Xavier : 
+
+    ./PCLSample
 
 ## Troubleshooting
-1. The following error occurs when compiling the sample applications :
+1. The following error occurs when compiling the sample applications using CUDA 9.0 :
 
         In file included from /usr/local/cuda-9.0/include/common_functions.h:50:0,
                      from /usr/local/cuda-9.0/include/cuda_runtime.h:115,
@@ -38,10 +43,29 @@ To run the TaraXL pointcloud application, connect the TaraXL camera to device an
         /usr/local/cuda-9.0/include/crt/common_functions.h:64:24: error: token ""__CUDACC_VER is no longer supported.  Use CUDACC_VER_MAJOR, CUDACC_VER_MINOR, and CUDACC_VER_BUILD__ instead."" is not valid in preprocessor expressions
         #define CUDACC_VER "__CUDACC_VER is no longer supported.  Use CUDACC_VER_MAJOR, CUDACC_VER_MINOR, and CUDACC_VER_BUILD__ instead."
     
+    and the following when using CUDA 10.0 : 
+    
+            In file included from /usr/local/cuda/include/cuda_runtime.h:120:0,
+                         from <command-line>:0:
+        /usr/local/cuda/include/crt/common_functions.h:74:24: error: token ""__CUDACC_VER__ is no longer supported.  Use __CUDACC_VER_MAJOR__, __CUDACC_VER_MINOR__, and __CUDACC_VER_BUILD__ instead."" is not valid in preprocessor expressions
+         #define __CUDACC_VER__ "__CUDACC_VER__ is no longer supported.  Use __CUDACC_VER_MAJOR__, __CUDACC_VER_MINOR__, and __CUDACC_VER_BUILD__ instead."
+                                ^
+        /usr/local/cuda/include/crt/common_functions.h:74:24: error: token ""__CUDACC_VER__ is no longer supported.  Use __CUDACC_VER_MAJOR__, __CUDACC_VER_MINOR__, and __CUDACC_VER_BUILD__ instead."" is not valid in preprocessor expressions
+         #define __CUDACC_VER__ "__CUDACC_VER__ is no longer supported.  Use __CUDACC_VER_MAJOR__, __CUDACC_VER_MINOR__, and __CUDACC_VER_BUILD__ instead."
+                                ^
+        /usr/local/cuda/include/crt/common_functions.h:74:24: error: token ""__CUDACC_VER__ is no longer supported.  Use __CUDACC_VER_MAJOR__, __CUDACC_VER_MINOR__, and __CUDACC_VER_BUILD__ instead."" is not valid in preprocessor expressions
+         #define __CUDACC_VER__ "__CUDACC_VER__ is no longer supported.  Use __CUDACC_VER_MAJOR__, __CUDACC_VER_MINOR__, and __CUDACC_VER_BUILD__ instead."
+                                ^
+        /usr/local/cuda/include/crt/common_functions.h:74:24: error: token ""__CUDACC_VER__ is no longer supported.  Use __CUDACC_VER_MAJOR__, __CUDACC_VER_MINOR__, and __CUDACC_VER_BUILD__ instead."" is not valid in preprocessor expressions
+         #define __CUDACC_VER__ "__CUDACC_VER__ is no longer supported.  Use __CUDACC_VER_MAJOR__, __CUDACC_VER_MINOR__, and __CUDACC_VER_BUILD__ instead."
+                                ^
+        /usr/local/cuda/include/crt/common_functions.h:74:24: error: token ""__CUDACC_VER__ is no longer supported.  Use __CUDACC_VER_MAJOR__, __CUDACC_VER_MINOR__, and __CUDACC_VER_BUILD__ instead."" is not valid in preprocessor expressions
+         #define __CUDACC_VER__ "__CUDACC_VER__ is no longer supported.  Use __CUDACC_VER_MAJOR__, __CUDACC_VER_MINOR__, and __CUDACC_VER_BUILD__ instead."
     It occurs when compiling boost/eigen along with cuda. You need to update the boost/eigen libraries or try commenting out this line :
         
         #define CUDACC_VER "__CUDACC_VER is no longer supported.  Use CUDACC_VER_MAJOR, CUDACC_VER_MINOR, and CUDACC_VER_BUILD__ instead."
-    in /usr/local/cuda-9.0/include/crt/common_functions.h.
+        
+    in /usr/local/cuda-9.0/include/crt/common_functions.h while compiling with CUDA 9.0 and in /usr/local/cuda/include/crt/common_functions.h while compiling with CUDA 10.0.
 
 2. The following error occurs while running make in TX2:
 
@@ -57,3 +81,22 @@ To run the TaraXL pointcloud application, connect the TaraXL camera to device an
     
         cd /usr/lib/aarch64-linux-gnu/
         sudo ln -sf tegra/libGL.so libGL.so
+3. The following error occurs in Xavier
+
+        In file included from /usr/include/eigen3/Eigen/StdVector:14:0,
+                     from /usr/local/taraxl-pcl/include/pcl-1.8/pcl/pcl_base.h:49,
+                     from /usr/local/taraxl-pcl/include/pcl-1.8/pcl/common/common.h:41,
+                     from /usr/local/taraxl-pcl/include/pcl-1.8/pcl/common/common_headers.h:39,
+                     from /usr/local/taraxl-sdk/include/TaraXLPointcloud.h:22,
+                     from /home/nvidia/Desktop/taraxl-tools/taraxl-pointcloud-app/PCLSample.cu:9:
+        /usr/include/eigen3/Eigen/Core:42:14: fatal error: math_functions.hpp: No such file or directory
+         #include <math_functions.hpp>
+                  ^~~~~~~~~~~~~~~~~~~~
+        compilation terminated.
+    It occurs when compiling boost/eigen along with cuda 10.0. You need to update the boost/eigen libraries or try commenting out this line in "/usr/include/eigen3/Eigen/Core" (line number 42)
+    
+            #include <math_functions.hpp>
+            
+    and add the below line :
+
+            #include <cuda_runtime.h>

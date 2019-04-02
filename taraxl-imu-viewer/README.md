@@ -4,14 +4,14 @@ TaraXL SDK provides high level APIs to get values from accelerometer and gyrosco
 
 ## Prerequisites
 
-- Ubuntu 16.04
+- Ubuntu 16.04/18.04
 - TaraXL SDK
-- Cuda9.0
+- Cuda9.0/10.0
 
 ## Getting started
 
 1. Download the latest version of the TaraXL SDK at https://developer.e-consystems.com
-2. Install the TaraXL SDK on NVIDIA TX2/ Ubuntu x86 device.
+2. Install the TaraXL SDK on NVIDIA TX2/Xavier/Ubuntu x86 device.
 
 ## Build the application
 
@@ -27,5 +27,10 @@ Open a terminal and build the package:
 
 To run the TaraXL pointcloud application, connect the TaraXL camera to device and execute the following command
 
+For NVIDIA Jetson TX2 : 
+
     sudo ./taraxlIMU
+For NVIDIA Jetson Xavier : 
+
+    ./taraxlIMU
 

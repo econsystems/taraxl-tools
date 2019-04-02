@@ -14,19 +14,21 @@
 #include "pcl/visualization/pcl_visualizer.h"
 #include "pcl/visualization/cloud_viewer.h"
 #include <pcl/visualization/common/common.h>
+#include "pcl/common/transforms.h"
+
 using namespace std;
 using namespace cv;
 using namespace TaraXLSDK;
+using namespace pcl;
 
 
-enum quality{S = 0, M = 1, H = 2 };
-enum quality pcl_quality = H;
+enum quality{STANDARD = 0, MEDIUM = 1, HIGHEST = 2 };
+quality pcl_quality = quality::HIGHEST;
 enum save{PLY = 0, PCD = 1, VTK = 2};
-enum save pcl_save = PLY;
+save pcl_save = PLY;
 int showSaved=0,savePressed=0;
-//#define PRINT_TIME
 
-boost::mutex io_mutex;
+boost::mutex ioMutex;
 
 
 void viewerOneOff (pcl::visualization::PCLVisualizer& viewer)
@@ -37,7 +39,7 @@ void viewerOneOff (pcl::visualization::PCLVisualizer& viewer)
     viewer.addText("Press m/M to change quality",20,60,15,10,10,255,"modeInst");
     viewer.addText("Save format : PLY",20,40,15,10,10,255,"saveFormat");
     viewer.addText("Press n/N to change save format",20,20,15,10,10,255,"saveInst");
-    viewer.addText("",20,0,15,10,10,255,"saved");
+    viewer.addText("Press SHIFT+S to save",20,0,15,10,10,255,"saved");
 
 }
 
@@ -45,11 +47,11 @@ void viewerOneOff (pcl::visualization::PCLVisualizer& viewer)
 void viewerUpdate (pcl::visualization::PCLVisualizer& viewer)
 {
 
-	if(pcl_quality==S)
+	if(pcl_quality==quality::STANDARD)
 		viewer.updateText("Quality mode : Standard",20,80,15,10,10,255,"mode");
-    if(pcl_quality==M)
+    if(pcl_quality==quality::MEDIUM)
         viewer.updateText("Quality mode : Medium",20,80,15,10,10,255,"mode");
-    if(pcl_quality==H)
+    if(pcl_quality==quality::HIGHEST)
         viewer.updateText("Quality mode : Highest",20,80,15,10,10,255,"mode");
 
 
@@ -73,7 +75,7 @@ void viewerUpdate (pcl::visualization::PCLVisualizer& viewer)
     
 	if(savePressed==0)
     {
-		viewer.updateText(" ",20,0,15,10,10,255,"saved");  
+		viewer.updateText("Press SHIFT+S to save",20,0,15,10,10,255,"saved");  
     } 
  
 }
@@ -91,34 +93,34 @@ void keyboardEventOccurred (const pcl::visualization::KeyboardEvent &event,void*
   	{
 		switch (pcl_quality)
 	    {
-    		case H:
-     		status = taraxl3d->setPointcloudQuality(STANDARD);
+    		case quality::HIGHEST:
+     		status = taraxl3d->setPointcloudQuality(TaraXLSDK::STANDARD);
      		if (status != TARAXL_SUCCESS)
      		{
       			cout << "Quality set failed" << endl;
       			break ;
      		}
-     		pcl_quality = S;
+     		pcl_quality = quality::STANDARD;
      		break;
 
-     		case M:
-     		status = taraxl3d->setPointcloudQuality(HIGHEST);
+     		case quality::MEDIUM:
+     		status = taraxl3d->setPointcloudQuality(TaraXLSDK::HIGHEST);
      		if (status != TARAXL_SUCCESS)
      		{
       			cout << "Quality set failed" << endl;
      			 break ;
      		}
-    		pcl_quality = H;
+    		pcl_quality = quality::HIGHEST;
     		break;
 
-     		case S:
-     		status = taraxl3d->setPointcloudQuality(MEDIUM);
+     		case quality::STANDARD:
+     		status = taraxl3d->setPointcloudQuality(TaraXLSDK::MEDIUM);
      		if (status != TARAXL_SUCCESS)
     		{
       			cout << "Quality set failed" << endl;
       			break ;
      		}
-     		pcl_quality = M;
+     		pcl_quality = quality::MEDIUM;
      		break;
 	}
 
@@ -146,44 +148,44 @@ void keyboardEventOccurred (const pcl::visualization::KeyboardEvent &event,void*
 
 	if ( event.isShiftPressed() && (event.getKeySym () == "S" || event.getKeySym () =="s") && event.keyUp())
  	{
-		io_mutex.lock();
+		ioMutex.lock();
 
 		switch(pcl_save)
   		{
 			case PLY :
-     		status = taraxl3d->savePoints(TARAXL_PLY_CLOUD,"samplePLYCloud.ply"); 
+     			status = taraxl3d->savePoints(TARAXL_PLY_CLOUD,"samplePLYCloud.ply"); 
      
-     		if (status != TARAXL_SUCCESS)
-    		{
-      			cout << "Save failed" << endl;
-      			break;
-     		} 
-     		savePressed=1;
-     		break;
+     			if (status != TARAXL_SUCCESS)
+    			{
+      				cout << "Save failed" << endl;
+      				break;
+     			} 
+     			savePressed=1;
+     			break;
   
 
      		case PCD:
-			status = taraxl3d->savePoints(TARAXL_PCD_CLOUD,"samplePCDCloud.pcd");
-			if (status != TARAXL_SUCCESS)
-			{
-				cout << "Save failed" << endl;
-			 	break;
-			}
-			savePressed=1;
-			break;
+				status = taraxl3d->savePoints(TARAXL_PCD_CLOUD,"samplePCDCloud.pcd");
+				if (status != TARAXL_SUCCESS)
+				{
+					cout << "Save failed" << endl;
+			 		break;
+				}
+				savePressed=1;
+				break;
 
 			case VTK:
-			status = taraxl3d->savePoints(TARAXL_VTK_CLOUD,"sampleVTKCloud.vtk");
-			if (status != TARAXL_SUCCESS)
-			{
-				cout << "Save failed" << endl;
-			 	break;
-			}
-			savePressed=1;
-			break;
+				status = taraxl3d->savePoints(TARAXL_VTK_CLOUD,"sampleVTKCloud.vtk");
+				if (status != TARAXL_SUCCESS)
+				{
+					cout << "Save failed" << endl;
+			 		break;
+				}
+				savePressed=1;
+				break;
 		 }
 
-		 io_mutex.unlock();
+		 ioMutex.unlock();
 
 	}
 
@@ -198,7 +200,7 @@ int main ()
  	TaraXLCamList taraxlCamList;
 	ResolutionList supportedResolutions;
 	TaraXLPointcloud *taraxl3d;
-	pcl::visualization::CloudViewer *g_PclViewer;
+	pcl::visualization::CloudViewer *pclViewer;
 
 
 	uint camIndex, iResIndex, iAccuracyMode;
@@ -279,7 +281,7 @@ int main ()
     	return 1;
   	}
 
-  	status = selectedCam.setResolution(supportedResolutions.at(iResIndex));
+  	status =selectedCam.setResolution(supportedResolutions.at(iResIndex));
   	if (status != TARAXL_SUCCESS) 
 	{
 		cout << "Set resolutions failed" << endl;
@@ -297,50 +299,53 @@ int main ()
   	cout<< endl << " \nPress n/N to cycle through the PointCloud save formats(PLY,PCD,VTK)  "<<endl;
   	cout<< endl << " \nPress SHIFT+S to save the PointCloud in the current save format "<<endl;
 
-  	g_PclViewer = new pcl::visualization::CloudViewer("TaraXL Point Cloud  Viewer");
+  	pclViewer = new pcl::visualization::CloudViewer("TaraXL Point Cloud  Viewer");
 
-  	Points::Ptr currentCloud (new Points);	
+	Points::Ptr currentCloud (new Points);	
 
-    #ifdef PRINT_TIME
-		timeval start, end;
-    	float deltatime = 0.0f,fpsTotaltime;
-    	unsigned int iFpsFrames = 0;
-    #endif
+   	pclViewer->registerKeyboardCallback (keyboardEventOccurred, (void*)taraxl3d );
 
-	g_PclViewer->registerKeyboardCallback (keyboardEventOccurred, (void*)taraxl3d );
+   	pclViewer->runOnVisualizationThreadOnce (viewerOneOff);
+   	pclViewer->runOnVisualizationThread (viewerUpdate);
 
-   	g_PclViewer->runOnVisualizationThreadOnce (viewerOneOff);
-   	g_PclViewer->runOnVisualizationThread (viewerUpdate);
-
-   	while(!g_PclViewer->wasStopped())
+   	while(!pclViewer->wasStopped())
    	{
 
-		#ifdef PRINT_TIME
-     		gettimeofday(&start, 0);
-    	#endif
-
-    	io_mutex.lock();
+    	ioMutex.lock();
     	status =  taraxl3d->getPoints(currentCloud);
-    	io_mutex.unlock();
-    
+		if (status != TARAXL_SUCCESS) 
+		{
+			cout << "Get points failed" << endl;
+      		return 1;
+  		}
+	
+    	ioMutex.unlock();
 
-		#ifdef PRINT_TIME
-     		gettimeofday(&end, 0);
-     		deltatime = (float)(end.tv_sec - start.tv_sec + (end.tv_usec - start.tv_usec) * 1e-6);
+	Eigen::Affine3f Transform_Matrix = Eigen::Affine3f::Identity();
 
-     		fpsTotaltime += deltatime;
-     		iFpsFrames++;
-     		if (fpsTotaltime > 1.0f)
-     		{
-      			cout<<endl<<((float)iFpsFrames / fpsTotaltime) ;
-      			fpsTotaltime = 0.0f;
-      			iFpsFrames = 0;
-     		}
-		#endif
+        float Trans_x = 0.0;
+        float Trans_y = 0.0;
+        float Trans_z = 0.0 ; //15.0;
+        float Rot_x = 0.0;
+        float Rot_y = 0.0;
+        float Rot_z = 0.0;
 
-    	g_PclViewer->showCloud(currentCloud);
+        // Define a translation of 2.5 meters on the x axis.
+        Transform_Matrix.translation() << Trans_x, Trans_y, Trans_z;
+
+        // The same rotation matrix as before; tetha radians arround Z axis
+        Transform_Matrix.rotate (Eigen::AngleAxisf (Rot_x, Eigen::Vector3f::UnitX()));
+        Transform_Matrix.rotate (Eigen::AngleAxisf (Rot_y, Eigen::Vector3f::UnitY()));
+        Transform_Matrix.rotate (Eigen::AngleAxisf (Rot_z, Eigen::Vector3f::UnitZ()));
+
+        PointCloud<PointXYZRGB>::Ptr point_cloud_Transformed_ptr (new PointCloud<PointXYZRGB>);
+        transformPointCloud (*currentCloud, *point_cloud_Transformed_ptr, Transform_Matrix);
+
+        pclViewer->showCloud(point_cloud_Transformed_ptr);
 
 	}
+
 	delete taraxl3d;
+	selectedCam.disconnect();
    	exit(0);
 }

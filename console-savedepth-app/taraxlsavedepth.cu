@@ -1,6 +1,7 @@
 #include <iostream>
 #include <ctime>
 #include  <iomanip>
+#include <sys/time.h>
 
 #include <opencv2/core/core.hpp>
 #include <opencv2/highgui/highgui.hpp>
@@ -21,6 +22,9 @@ int main () {
   TaraXLCamList taraxlCamList;
   ResolutionList supportedResolutions;
   TaraXLDepth *taraxlDepth;
+
+  timeval totalStart, totalEnd;
+  float deltaTime = 0, totalTime = 0;
 
   uint camIndex, iResIndex, iAccuracyMode;
   TARAXL_STATUS_CODE status;
@@ -115,7 +119,7 @@ int main () {
   }
 
   cout << endl << "Select a Accuracy mode:" << endl;
-  cout << "0: High Accuracy" << endl << "1: Low Accuracy" << endl;
+  cout << "0: High Accuracy" << endl <<"1: Low Accuracy "<<endl<<"2: Ultra Accuracy" << endl;
   cin >> iAccuracyMode;
 
   if (cin.fail()) {
@@ -132,6 +136,11 @@ int main () {
 
     status = taraxlDepth->setAccuracy(LOW);
   }
+  else if (iAccuracyMode == 2) {
+
+    status = taraxlDepth->setAccuracy(ULTRA);
+  }
+
   else {
 
     cout << "Invalid input" << endl;
@@ -144,13 +153,24 @@ int main () {
   }
 
   Mat left, right, grayDisp, colorDisp, depthMap;
-  status = taraxlDepth->getMap(left, right, grayDisp, true, depthMap, true);
-  if (status != TARAXL_SUCCESS) {
+ 
+  while(totalTime < 2.0f)
+  {
+        gettimeofday(&totalStart, 0);
 
-      cout << "Get map failed" << endl;
-      delete taraxlDepth;
-      return 1;
+      status = taraxlDepth->getMap(left, right, grayDisp, true, depthMap, true, TARAXL_DEFAULT_FILTER);
+      if (status != TARAXL_SUCCESS) {
+
+        cout << "Get map failed" << endl;
+        delete taraxlDepth;
+        return 1;
+      }
+ 
+      gettimeofday(&totalEnd, 0);
+      deltaTime = (float)(totalEnd.tv_sec - totalStart.tv_sec + (totalEnd.tv_usec - totalStart.tv_usec) * 1e-6);
+      totalTime += deltaTime;
   }
+
   grayDisp.convertTo(grayDisp,CV_8U);
   applyColorMap(grayDisp, colorDisp, COLORMAP_JET);
 
@@ -163,5 +183,6 @@ int main () {
   cout << endl << "Images saved to the disk!!!!" << endl;
 
   delete taraxlDepth;
+  selectedCam.disconnect();
   exit(0);
 }

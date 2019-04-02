@@ -44,6 +44,6 @@ INCLUDEPATH += \
 	"/usr/local/taraxl-opencv/include" \
 
 LIBS += \
-	-L"/usr/local/taraxl-sdk/lib" -lecon_taraxl \
-	-L"/usr/local/taraxl-opencv/lib" -lopencv_core -lopencv_imgproc \ 
+	-L"/usr/local/taraxl-sdk/lib/" -lecon_taraxl \
+	-L"/usr/local/taraxl-opencv/lib" -lopencv_core -lopencv_imgproc -lopencv_imgcodecs\ 
 	-L"/usr/lib/aarch64-linux-gnu/tegra/" -lGL

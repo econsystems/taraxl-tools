@@ -16,6 +16,7 @@ Rectangle {
 
     property alias brightnessValText: brightnessValTxt.text
     property alias expValText: exposureValTxt.text
+    property alias gainValText: gainValTxt.text
 
     property alias brightnessVal: brightnessSlider.value
     signal brightnessChanged(int value)
@@ -26,14 +27,33 @@ Rectangle {
     property alias autoExposureChecked: autoExpCheckBox.checked
     signal autoExpChecked(var checked)
 
+    property alias gainVal: gainSlider.value
+    signal gainChanged(int value)
+
     property alias highFpsChecked: highFpsRadioBtn.checked
     signal highFpsRadioBtnChecked()
 
     property alias highAccuracyChecked: highAccuracyRadioBtn.checked
     signal highAccuracyRadioBtnChecked()
 
+    property alias ultraAccuracyChecked: ultraAccuracyRadioBtn.checked
+    signal ultraAccuracyRadioBtnChecked()
+
     property alias camCtrlRectEnabled: camCtrlsRect.enabled
     property alias algoSettingsRectEnabled: collapsedAlgoSettingsRect.enabled
+
+    property alias brightnessSliderEnabled: brightnessSlider.enabled
+    property alias brightnessValTextEnabled: brightnessValTxt.enabled
+
+    property alias exposureValMin: exposureSlider.minimumValue
+    property alias exposureValMax: exposureSlider.maximumValue
+
+    property alias gainSliderEnabled: gainSlider.enabled
+    property alias gainValTextEnabled: gainValTxt.enabled
+
+    property alias brightnessValMin: brightnessSlider.minimumValue
+    property alias brightnessValMax: brightnessSlider.maximumValue
+
 
     Grid {
 
@@ -163,7 +183,7 @@ Rectangle {
             x: 0
             y: 0
             width: parent.width
-            height: settingsGrid.height * 0.30
+            height: settingsGrid.height * 0.4
 
             visible: false
 
@@ -245,7 +265,7 @@ Rectangle {
                 x: 0
                 y: camCtrlsTitleBarRect.height
                 width: parent.width
-                height: settingsGrid.height * 0.23
+                height: settingsGrid.height * 0.33
 
                 color: "#444444"
 
@@ -274,10 +294,10 @@ Rectangle {
                     anchors.top: brightnessTxt.bottom
                     anchors.topMargin: 5
                     width: parent.width * 0.60
-                    height: parent.height * 0.20
+                    height: (parent.height * 0.13941)
 
                     minimumValue: 1
-                    maximumValue: 7
+                    maximumValue: 10
                     stepSize: 1
 
                     updateValueWhileDragging: false
@@ -296,15 +316,15 @@ Rectangle {
 
                             implicitWidth: exposureSlider.width
                             implicitHeight: 2
-                            color: "white"
-                            radius: 8
+                            color: control.enabled ? "white" : "gray"
+			    radius: 8
                         }
 
                         handle: Rectangle {
 
                             anchors.centerIn: parent
-                            color: "#db6437"
-                            implicitWidth: 15
+                            color: control.enabled ? "#db6437" : "gray"
+		 	    implicitWidth: 15
                             implicitHeight: 15
                             radius: 12
                         }
@@ -339,18 +359,31 @@ Rectangle {
                         verticalAlignment: Text.AlignVCenter
                         textColor: "black"
 
-                        maximumLength: 1
+                        maximumLength: 2
 
                         anchors.centerIn: parent
                         font.pixelSize: parent.height * 0.5
 
                         validator: IntValidator { }
 
+			onEnabledChanged: {
+
+                            if (enabled) {
+
+                                textColor = "black"
+                            }
+                            else {
+
+                                textColor = "gray"
+                            }
+                        }
+
                         onEditingFinished: {
 
                             if (text != "") {
 
                                 brightnessSlider.value = text
+                                focus = false
                             }
                         }
                     }
@@ -425,7 +458,7 @@ Rectangle {
                     anchors.top: autoExpCheckBox.bottom
                     anchors.topMargin: 5
                     width: parent.width * 0.60
-                    height: parent.height * 0.20
+                    height: (parent.height * 0.13941)
 
                     minimumValue: 10
                     maximumValue: 1000000
@@ -514,6 +547,130 @@ Rectangle {
                             if (text != "") {
 
                                 exposureSlider.value = text
+                                focus = false
+                            }
+                        }
+                    }
+
+                }
+
+
+                Text {
+
+                    id: gainTxt
+
+                    x: 15
+                    anchors.top: exposureValRect.bottom
+                    anchors.topMargin: 15
+                    width: parent.width - x
+
+                    text: qsTr("Gain")
+                    horizontalAlignment: Text.AlignLeft
+                    verticalAlignment: Text.AlignTop
+                    color: "white"
+                    font.family: "arial"
+                    font.bold: true
+                    font.pixelSize: parent.width * 0.06
+                }
+ Slider {
+
+                    id: gainSlider
+
+                    x: 30
+                    anchors.top: gainTxt.bottom
+                    anchors.topMargin: 5
+                    width: parent.width * 0.60
+                    height: (parent.height * 0.13941)
+
+                    minimumValue: 1
+                    maximumValue: 240
+                    stepSize: 1
+
+                    updateValueWhileDragging: false
+
+                    value: gainVal
+
+                    onValueChanged: {
+
+                        gainChanged(value)
+                        gainValText = value
+                    }
+
+                    style: SliderStyle {
+
+                        groove: Rectangle {
+
+                            implicitWidth: exposureSlider.width
+                            implicitHeight: 2
+			    color: control.enabled ? "white" : "gray"
+                            radius: 8
+                        }
+
+                        handle: Rectangle {
+
+                            anchors.centerIn: parent
+			    color: control.enabled ? "#db6437" : "gray"
+                            implicitWidth: 15
+                            implicitHeight: 15
+                            radius: 12
+                        }
+                    }
+                }
+
+                Rectangle {
+
+                    id: gainValRect
+
+                    anchors.left: gainSlider.right
+                    anchors.leftMargin: 10
+                    anchors.top:gainSlider.top
+                    anchors.topMargin: 5
+
+                    width: parent.width * 0.25
+                    height: gainSlider.height * 0.8
+
+                    radius: 5
+
+                    color: "white"
+
+                    TextField {
+
+                        id: gainValTxt
+
+                        width: parent.width
+                        height: parent.height
+
+                        text: gainSlider.value
+                        horizontalAlignment: Text.AlignHCenter
+                        verticalAlignment: Text.AlignVCenter
+                        textColor: "black"
+
+                        maximumLength: 3
+
+                        anchors.centerIn: parent
+                        font.pixelSize: parent.height * 0.5
+
+                        validator: IntValidator { }
+
+			onEnabledChanged: {
+
+                            if (enabled) {
+
+                                textColor = "black"
+                            }
+                            else {
+
+                                textColor = "gray"
+                            }
+                        }
+
+
+                        onEditingFinished: {
+
+                            if (text != "") {
+
+                                gainSlider.value = text
+                                focus = false
                             }
                         }
                     }
@@ -694,7 +851,7 @@ Rectangle {
                 x: 0
                 y: algoSettingsTitleBarRect.height
                 width: parent.width
-                height: settingsGrid.height * 0.10
+                height: settingsGrid.height * 0.14
 
                 color: "#444444"
 
@@ -805,6 +962,58 @@ Rectangle {
                         if(checked) {
 
                             highAccuracyRadioBtnChecked()
+                        }
+                    }
+                }
+                RadioButton {
+
+                    id: ultraAccuracyRadioBtn
+
+                    x: parent.width * 0.20
+                    anchors.top: highAccuracyRadioBtn.bottom
+                    anchors.topMargin: 15
+
+                    width: parent.width * 0.60
+
+                    style: RadioButtonStyle {
+
+                        spacing: 10
+                        label: Text {
+
+                            text: qsTr("Ultra accuracy")
+                            horizontalAlignment: Text.AlignLeft
+                            verticalAlignment: Text.AlignVCenter
+                            color: "white"
+                            font.family: "arial"
+                            font.pixelSize: algoSettingsRect.width * 0.06
+                        }
+
+                        indicator: Rectangle {
+
+                            implicitWidth: 15
+                            implicitHeight: 15
+                            radius: 8
+                            border.color: control.activeFocus ? "darkblue" : "gray"
+                            border.width: 1
+
+                            Rectangle {
+
+                                anchors.fill: parent
+                                visible: control.checked
+                                color: "#555"
+                                radius: 9
+                                anchors.margins: 4
+                            }
+                        }
+                    }
+                    exclusiveGroup: algoSettingsGrp
+                    checked: ultraAccuracyChecked
+
+                    onCheckedChanged: {
+
+                        if(checked) {
+
+                            ultraAccuracyRadioBtnChecked()
                         }
                     }
                 }

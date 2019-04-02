@@ -5,19 +5,29 @@ import cam 1.0
 
 Window {
 
-    id: mainWnd
-
     title: "TaraXL Studio"
 
     visible: true
 //    visibility: Window.FullScreen
     flags: Qt.FramelessWindowHint //| Qt.Window
-
     width: Screen.width
     height: Screen.height
-
     property string frameId: "left"
     property var expVal: 0
+    property var camName: ""
+    property int camChanged: 0
+
+Rectangle {
+    id: mainWnd
+    width: parent.width
+    height: parent.height
+    focus : true
+    Keys.onPressed: {
+        if (event.key == Qt.Key_S) {
+            cam.saveImages()
+        }
+    }
+
 
     Camera {
 
@@ -32,6 +42,33 @@ Window {
 
             if (camConnected) {
 
+		camName = cam.getCameraName()
+		if(camName == "1")
+		{
+			settings.gainSliderEnabled = false
+                        settings.gainValTextEnabled = false
+			settings.brightnessSliderEnabled = true
+                        settings.brightnessValTextEnabled = true
+			settings.exposureValMin = 10
+			settings.exposureValMax = 1000000
+                        settings.exposureVal = 8000
+			settings.brightnessValMin = 1
+                        settings.brightnessValMax = 7
+                        settings.brightnessVal = 4			
+		}
+                else
+		{
+			settings.gainSliderEnabled = true
+                        settings.gainValTextEnabled = true
+			settings.brightnessSliderEnabled = false
+			settings.brightnessValTextEnabled = false
+			settings.exposureValMin = 1
+			settings.exposureValMax = 7500
+                        settings.exposureVal = 825
+			settings.brightnessValMin =1 
+                        settings.brightnessValMax = 10
+		}
+
                 settings.camCtrlRectEnabled = true
                 settings.algoSettingsRectEnabled = true
 
@@ -40,17 +77,16 @@ Window {
 
                 cam.startPreview()
 
-                settings.brightnessVal = 4
+		settings.gainVal = 1
                 expVal = cam.getExposureVal()
 
-                if (expVal === 1) {
+                cam.enableAutoExposure()
+                settings.autoExposureChecked = true
 
-                    settings.autoExposureChecked = true
-                }
-                else {
+		if(camName != "1")
+			settings.brightnessVal = 6
 
-                    settings.exposureVal = expVal
-                }
+
                 mainWnd.update()
             }
             else {
@@ -173,13 +209,16 @@ Window {
 
         onCamSelected: {
 
+	    camChanged = 1;
             cam.connectCamera(index)
-            cam.setAccuracyMode(true)
+	    cam.setAccuracyMode(0)
         }
 
         onResolutionChanged: {
 
-            cam.setResolution(index)
+	    if(camChanged == 0)
+	            cam.setResolution(index)
+	    camChanged = 0;
         }
     }
 
@@ -190,11 +229,19 @@ Window {
         onBrightnessChanged: {
 
             cam.setBrightnessVal(value)
+            mainWnd.focus = true
         }
 
         onExposureChanged: {
 
             cam.setExposureVal(value)
+            mainWnd.focus = true
+        }
+
+	onGainChanged: {
+
+            cam.setGainVal(value)
+            mainWnd.focus = true
         }
 
         onAutoExpChecked: {
@@ -202,21 +249,37 @@ Window {
             if (checked) {
 
                 cam.enableAutoExposure()
-            }
+		camName = cam.getCameraName();
+                if(camName != "1")
+		{
+			settings.brightnessSliderEnabled = true
+                	settings.brightnessValTextEnabled = true
+            	}
+	    }
             else {
 
                 cam.setExposureVal(exposureVal)
+		if(camName != "1")
+                {
+			settings.brightnessSliderEnabled = false
+        	        settings.brightnessValTextEnabled = false
+		}
             }
         }
 
         onHighAccuracyRadioBtnChecked: {
 
-            cam.setAccuracyMode(true)
+            cam.setAccuracyMode(0)
         }
 
         onHighFpsRadioBtnChecked: {
 
-            cam.setAccuracyMode(false)
+            cam.setAccuracyMode(1)
+        }
+
+        onUltraAccuracyRadioBtnChecked: {
+
+            cam.setAccuracyMode(2)
         }
     }
 
@@ -601,7 +664,7 @@ Window {
 
                 id: depthTxt
 
-                text: qsTr("Depth (in cm):")
+                text: qsTr("Depth :")
                 horizontalAlignment: Text.AlignRight
                 color: "#292929"
                 font.bold: true
@@ -624,7 +687,7 @@ Window {
 
     Component.onCompleted: {
 
-        settings.exposureVal = 8000
         cam.getConnectedCameras()
     }
+}
 }

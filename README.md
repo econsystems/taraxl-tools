@@ -1,9 +1,6 @@
 ## Introduction to TaraXL
 
-The TaraXL - See3CAM_StereoA is a UVC compliant USB 3.0 SuperSpeed Stereo vision camera from e-con Systems, a leading embedded Product Design Services company which specializes in the advanced camera solutions.
-
-For More Information please visit:
-https://www.e-consystems.com/3d-usb-stereo-camera-with-nvidia-accelerated-sdk.asp
+The TaraXL is a CUDA accelerated software development kit that work on See3CAM_StereoA and STEEReoCAM.
 
 ## Contents
 
@@ -16,7 +13,7 @@ The taraxl tools demonstrates the API feature and code.
 ## Getting started
 
 1. Download the latest version of the TaraXL SDK at https://developer.e-consystems.com
-2. Install the TaraXL SDK on you NVIDIA TX2 device/Linux x86 PC.
+2. Install the TaraXL SDK on you NVIDIA TX2/Xavier device/Linux x86 PC.
 
 
 ## Support

@@ -55,15 +55,23 @@ public Q_SLOTS:
 
     void setBrightnessVal(const int value);
 
+    int getGainVal();
+
+    void setGainVal(const int value);
+
+    void saveImages();
+
     int getExposureVal();
 
     void setExposureVal(const int value);
 
     void enableAutoExposure();
 
-    void setAccuracyMode(const bool highAccuracy);
+    void setAccuracyMode(const int selectedAccuracyMode);
 
     void getDepth(const int X, const int Y, const int viewerWidth, const int viewerHeight);
+
+    int getCameraName();
 
 private:
     TaraXLSDK::ACCURACY_MODE m_eAccuracy;
@@ -99,6 +107,7 @@ private:
     bool m_bGetDepth;
     int m_iX;
     int m_iY;
+    int resChanged = 0;
 
     bool isCamConnected();
     void setCamConnected(bool camConnected);

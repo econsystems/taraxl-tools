@@ -138,10 +138,11 @@ Rectangle {
                     }
                 }
 
-                onCountChanged: {
+              /*  onCountChanged: {
+                        console.log("Its mei t00\n");
+
 
                     if (count > 0) {
-
                         currentIndex = 0
                         camSelected(currentIndex)
                         resolutionsTxtRect.enabled = true
@@ -153,15 +154,20 @@ Rectangle {
                         resolutionsDropDownRect.enabled = false
                     }
                 }
+		*/
 
                 onCurrentIndexChanged: {
 
-                     if (count > 0) {
-
+                     if (currentIndex != -1) {
                          camSelected(currentIndex)
+			 resolutionsTxtRect.enabled = true
+                         resolutionsDropDownRect.enabled = true
+
+                         resolutionsComboBox.currentIndex = -1
+                         resolutionsComboBox.currentIndex = 0
                      }
 
-                    if (currentText == "") {
+                 /*   if (currentText == "") {
 
                         resolutionsTxtRect.enabled = false
                         resolutionsDropDownRect.enabled = false
@@ -171,6 +177,7 @@ Rectangle {
                         resolutionsTxtRect.enabled = true
                         resolutionsDropDownRect.enabled = true
                     }
+		*/
                 }
             }
         }
@@ -267,8 +274,8 @@ Rectangle {
                 }
 
                 onCurrentIndexChanged: {
-
-                    resolutionChanged(currentIndex)
+		    if(currentIndex != -1 && cameraComboBox.currentIndex != -1)
+	                    resolutionChanged(currentIndex)
                 }
             }
         }
