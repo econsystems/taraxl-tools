@@ -1,6 +1,6 @@
 ## Introduction to TaraXL
 
-The TaraXL is a CUDA accelerated software development kit that work on See3CAM_StereoA and STEEReoCAM.
+The TaraXL is a CUDA accelerated software development kit that work on See3CAM_StereoA and STEEReoCAM. Kindly check the tags and use the TaraXL tools corresponding to the SDK version you have.
 
 ## Contents
 
