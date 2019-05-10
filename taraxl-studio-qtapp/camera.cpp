@@ -10,12 +10,13 @@ pthread_t m_gPreviewThread;
 pthread_mutex_t g_mtx = PTHREAD_RECURSIVE_MUTEX_INITIALIZER_NP;
 pthread_mutex_t g_mtx_depth = PTHREAD_RECURSIVE_MUTEX_INITIALIZER_NP;
 std::thread lut1,lut2,lut3;
-
+bool initializedFlag;
 camera::camera() {
 
   m_pImgProvider = ImageProvider::getInstance();
   m_bGetDepth = false;
   m_bIsCameraConnected = false; 
+  initializedFlag = true;
 }
 
 camera::~camera() {
@@ -173,15 +174,15 @@ void camera::getConnectedCameras() {
 }
 
 void camera::connectCamera(const int index) {
-
-  pthread_cancel(m_gPreviewThread);
+  pthread_mutex_lock(&g_mtx_depth);
   TARAXL_STATUS_CODE status = m_selectedCam.disconnect();
   if (status == TARAXL_SUCCESS) {
 
     cout << "disconnect success" << endl;
-    setCamConnected(false);
+    //Emitting the signal only on first connect.
+    if(initializedFlag)
+      setCamConnected(false);
   }
-
   if (m_iNoOfCamerasConnected == 0) {
 
     return;
@@ -195,15 +196,19 @@ void camera::connectCamera(const int index) {
 
     cout << "Camera connect success" << endl;
     m_taraDepth = new TaraXLDepth(m_selectedCam);
-    setCamConnected(true);
+    if(initializedFlag)
+      setCamConnected(true);
     m_iSelectedResolutionIndex = 0;
     m_selectedRes = m_supportedResolutions.at(m_iSelectedResolutionIndex);
   }
   else {
 
     cout << "Camera connect failed" << endl;
-    setCamConnected(false);
+    if(initializedFlag)
+      setCamConnected(false);
   }
+  initializedFlag = false;
+  pthread_mutex_unlock(&g_mtx_depth);
 }
 
 void camera::getSupportedResolutions() {
@@ -248,16 +253,12 @@ int camera::getCameraName()
 
 }
 void camera::startPreview() {
-
   if (!m_bIsCameraConnected) {
 
     return;
   }
-
   if (!pthread_create(&m_gPreviewThread, NULL, camera::previewThreadCreateHelper, this)) {
-
     if (pthread_detach(m_gPreviewThread) != 0) {
-
       exit(EXIT_FAILURE);
     }
   }
@@ -323,20 +324,12 @@ void camera::previewThread() {
   while (1) {
 
     gettimeofday(&totalStart, 0);
-
     if (m_taraDepth != NULL) {
-       string name;
-       m_selectedCam.getFriendlyName(name);
-
-      if(name != "See3CAM_StereoA")
         pthread_mutex_lock(&g_mtx_depth);
       m_taraDepth->getMap(left, right, disp0, true, depthMap, false, TARAXL_DEFAULT_FILTER);
-      if(name != "See3CAM_StereoA")
         pthread_mutex_unlock(&g_mtx_depth);
     }
-
     pthread_mutex_lock(&g_mtx);
-
     if (m_bGetDepth) {
 
       m_bGetDepth = false;
@@ -408,27 +401,31 @@ void camera::previewThread() {
 
     }
     pthread_mutex_unlock(&g_mtx);
-
-
-
     setLeftImage(left);
     setRightImage(right);
-
     disp0.convertTo(disp0, CV_8UC1);
+
+    if(lut3.joinable())
+    lut3.join();
+    if(lut2.joinable())
+    lut2.join();
+    if(lut1.joinable())
+    lut1.join();
 
     lut3 = std::thread(lutB, disp0,lookUpTable_B, std::ref(cdb));
     lut1 = std::thread(lutR, disp0,lookUpTable_R,std::ref(cdr));
     lut2 = std::thread(lutG, disp0,lookUpTable_G,std::ref( cdg));
-
     std::vector<cv::Mat> planes;
+    if(lut3.joinable())
     lut3.join();
     planes.push_back(cdb);
+    if(lut2.joinable())
     lut2.join();
     planes.push_back(cdg);
+    if(lut1.joinable())
     lut1.join();
     planes.push_back(cdr);
     cv::merge(planes,disp1);
-
     if (resChanged!=0 )
     {
       if( resChanged == 3)
@@ -442,8 +439,6 @@ void camera::previewThread() {
       setDisp0Image(disp0);
       setDisp1Image(disp1);
     }
-
-
     gettimeofday(&totalEnd, 0);
     fpsDeltatime = (float)(totalEnd.tv_sec - totalStart.tv_sec + (totalEnd.tv_usec - totalStart.tv_usec) * 1e-6);
     fpsTotaltime += fpsDeltatime;
@@ -459,13 +454,12 @@ void camera::previewThread() {
       iFpsFrames = 0;
 
     }
-
   }
 }
 
 
 void camera::setResolution(int index) {
-
+  pthread_mutex_lock(&g_mtx_depth);
   resChanged = 1;
 
   if (!m_bIsCameraConnected) {
@@ -473,7 +467,6 @@ void camera::setResolution(int index) {
     return;
   }
 
-  pthread_cancel(m_gPreviewThread);
   TARAXL_STATUS_CODE status;
 
   if (m_supportedResolutions.size() > 0) {
@@ -487,7 +480,7 @@ void camera::setResolution(int index) {
     }
   }
 
-  startPreview();
+  pthread_mutex_unlock(&g_mtx_depth);
 }
 
 int camera::getBrightnessVal() {
@@ -632,7 +625,6 @@ void camera::setAccuracyMode(const int selectedAccuracyMode) {
   string name;
   m_selectedCam.getFriendlyName(name);
 
-  if(name != "See3CAM_StereoA")
      pthread_mutex_lock(&g_mtx_depth);
   TARAXL_STATUS_CODE status;
   switch (selectedAccuracyMode) {
@@ -648,7 +640,6 @@ void camera::setAccuracyMode(const int selectedAccuracyMode) {
     default:
     status = m_taraDepth->setAccuracy(HIGH);
   }
-  if(name != "See3CAM_StereoA")
     pthread_mutex_unlock(&g_mtx_depth);
   if (status == TARAXL_SUCCESS) {
 
