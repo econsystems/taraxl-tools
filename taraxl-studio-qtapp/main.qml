@@ -16,6 +16,7 @@ Window {
     property var expVal: 0
     property var camName: ""
     property int camChanged: 0
+    property var camState: 0
 
 Rectangle {
     id: mainWnd
@@ -45,28 +46,45 @@ Rectangle {
 		camName = cam.getCameraName()
 		if(camName == "1")
 		{
-			settings.gainSliderEnabled = false
-                        settings.gainValTextEnabled = false
-			settings.brightnessSliderEnabled = true
-                        settings.brightnessValTextEnabled = true
+			if(camState == 0)
+			{
+				settings.gainSliderEnabled = false
+		                settings.gainValTextEnabled = false
+				settings.brightnessSliderEnabled = true
+		                settings.brightnessValTextEnabled = true
+			}
 			settings.exposureValMin = 10
 			settings.exposureValMax = 1000000
-                        settings.exposureVal = 8000
+                        settings.exposureVal = cam.getExposureVal()
+
+                	cam.enableAutoExposure()
+                	settings.autoExposureChecked = true
+
 			settings.brightnessValMin = 1
                         settings.brightnessValMax = 7
-                        settings.brightnessVal = 4			
+                        settings.brightnessVal = cam.getBrightnessVal()			
 		}
                 else
 		{
-			settings.gainSliderEnabled = true
-                        settings.gainValTextEnabled = true
-			settings.brightnessSliderEnabled = false
-			settings.brightnessValTextEnabled = false
+			if(camState == 0)
+			{
+				settings.gainSliderEnabled = true
+		                settings.gainValTextEnabled = true
+				settings.brightnessSliderEnabled = false
+				settings.brightnessValTextEnabled = false
+			}
 			settings.exposureValMin = 1
 			settings.exposureValMax = 7500
-                        settings.exposureVal = 825
+                        settings.exposureVal = cam.getExposureVal()
+
+                	cam.enableAutoExposure()
+                	settings.autoExposureChecked = true
+
 			settings.brightnessValMin =1 
                         settings.brightnessValMax = 10
+			settings.brightnessVal = cam.getBrightnessVal()
+			settings.gainVal = cam.getGainVal()
+		        expVal = cam.getExposureVal()
 		}
 
                 settings.camCtrlRectEnabled = true
@@ -75,18 +93,10 @@ Rectangle {
                 cam.getSupportedResolutions()
                 settings.highAccuracyChecked = true
 
+		if(camState == 0)
                 cam.startPreview()
 
-		settings.gainVal = 1
-                expVal = cam.getExposureVal()
-
-                cam.enableAutoExposure()
-                settings.autoExposureChecked = true
-
-		if(camName != "1")
-			settings.brightnessVal = 6
-
-
+		camState = 1
                 mainWnd.update()
             }
             else {
@@ -234,6 +244,7 @@ Rectangle {
 
         onExposureChanged: {
 
+
             cam.setExposureVal(value)
             mainWnd.focus = true
         }
@@ -257,7 +268,6 @@ Rectangle {
             	}
 	    }
             else {
-
                 cam.setExposureVal(exposureVal)
 		if(camName != "1")
                 {

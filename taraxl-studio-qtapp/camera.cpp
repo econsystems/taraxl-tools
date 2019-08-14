@@ -175,13 +175,15 @@ void camera::getConnectedCameras() {
 
 void camera::connectCamera(const int index) {
   pthread_mutex_lock(&g_mtx_depth);
-  TARAXL_STATUS_CODE status = m_selectedCam.disconnect();
-  if (status == TARAXL_SUCCESS) {
+  TARAXL_STATUS_CODE status;
+  if(m_bIsCameraConnected)
+  {
+      status = m_selectedCam.disconnect();
+      if (status == TARAXL_SUCCESS) {
 
-    cout << "disconnect success" << endl;
-    //Emitting the signal only on first connect.
-    if(initializedFlag)
-      setCamConnected(false);
+        cout << "disconnect success" << endl;
+        setCamConnected(false);
+      }
   }
   if (m_iNoOfCamerasConnected == 0) {
 
@@ -196,16 +198,14 @@ void camera::connectCamera(const int index) {
 
     cout << "Camera connect success" << endl;
     m_taraDepth = new TaraXLDepth(m_selectedCam);
-    if(initializedFlag)
-      setCamConnected(true);
+    setCamConnected(true);
     m_iSelectedResolutionIndex = 0;
     m_selectedRes = m_supportedResolutions.at(m_iSelectedResolutionIndex);
   }
   else {
 
     cout << "Camera connect failed" << endl;
-    if(initializedFlag)
-      setCamConnected(false);
+    setCamConnected(false);
   }
   initializedFlag = false;
   pthread_mutex_unlock(&g_mtx_depth);

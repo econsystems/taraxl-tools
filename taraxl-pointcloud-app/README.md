@@ -27,10 +27,10 @@ Open a terminal and build the package:
 
 To run the TaraXL pointcloud application, connect the TaraXL camera to device and execute the following command
 
-For NVIDIA Jetson TX2 : 
+For Ubuntu x86 PC/NVIDIA Jetson TX2 upto L4T 32.1 : 
 
     sudo ./PCLSample
-For NVIDIA Jetson Xavier : 
+For NVIDIA Jetson TX2/Xavier from L4T 32.1 : 
 
     ./PCLSample
 
@@ -81,7 +81,7 @@ For NVIDIA Jetson Xavier :
     
         cd /usr/lib/aarch64-linux-gnu/
         sudo ln -sf tegra/libGL.so libGL.so
-3. The following error occurs in Xavier
+3. The following error occurs while using Xavier/TX2
 
         In file included from /usr/include/eigen3/Eigen/StdVector:14:0,
                      from /usr/local/taraxl-pcl/include/pcl-1.8/pcl/pcl_base.h:49,

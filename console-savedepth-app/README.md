@@ -27,9 +27,9 @@ Open a terminal and build the package:
 
 To run the TaraXL savedepth application, connect the TaraXL camera to TX2/Xavier and execute the following command
 
-For NVIDIA Jetson TX2 : 
+For Ubuntu x86 PC/NVIDIA Jetson TX2 upto 32.1 : 
 
     sudo ./taraxlsavedepth
-For NVIDIA Jetson Xavier : 
+For NVIDIA Jetson TX2/Xavier from 32.1 : 
 
     ./taraxlsavedepth
