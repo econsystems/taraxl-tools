@@ -17,6 +17,7 @@ MainWindow::MainWindow(QWidget *parent) :
     ui->actionPlay->setEnabled(false);
     ui->mainToolBar->addWidget(heading);
     setupGraphs(ui->customPlot,ui->customPlot2,ui->customPlot3);
+    escValue = true;
 }
 
 MainWindow::~MainWindow()
@@ -156,8 +157,6 @@ void MainWindow::setupGraphs(QCustomPlot *customPlot,QCustomPlot *customPlot2,QC
 
   connect(&dataTimer, SIGNAL(timeout()), this, SLOT(realtimeDataSlot()));
   dataTimer.start(10); 
-
-      
 }
 
 void MainWindow::realtimeDataSlot()
@@ -166,15 +165,16 @@ void MainWindow::realtimeDataSlot()
    if(isPaussed==1)
         return;
     static QTime time(QTime::currentTime());
+    static QTime time2(QTime::currentTime());
     
     double key = time.elapsed()/1000.0; 
-    static double lastPointKey = 0;
+    double key2 = time2.elapsed()/1000.0; 
    
     Vector3 imu;
     
     taraxlpose->getIMUData(imuData);
-
-    ui->customPlot->graph(0)->addData(key, imuData.linearAcceleration[0]); //x-value
+   
+    ui->customPlot->graph(0)->addData(key, imuData.linearAcceleration[0]); //x-value   
     ui->customPlot->graph(1)->addData(key, imuData.linearAcceleration[1]); //y-value
     ui->customPlot->graph(2)->addData(key, imuData.linearAcceleration[2]); //z-value
 
@@ -201,8 +201,7 @@ void MainWindow::realtimeDataSlot()
     ui->customPlot3->yAxis->rescale();
     ui->customPlot3->replot(QCustomPlot::rpImmediateRefresh);
 
-
-    if ( key - lastPointKey > 1)
+    if ( key2 > 1)
     {
 
      QCPTextElement* text = new QCPTextElement(ui->customPlot) ;
@@ -242,10 +241,35 @@ void MainWindow::realtimeDataSlot()
      subLayout3->addElement(1,0,text3);
      subLayout3->updateLayout();
 
-     lastPointKey = key;
+     time2.restart();
+     escValue = true;
     }
-                   
-   heading->setText(QString("TaraXL Sample IMU Application"));
+
+
+//Graph will re-set after 20 hours. So the overlapping of old data with new data will be avoided.
+if((((int)key % 72000) < 1.0) && escValue)
+{
+time.restart();
+
+QVector<double> vectorKey;
+QVector<double> imuValues;
+
+ui->customPlot->graph(0)->setData(vectorKey, imuValues); 
+ui->customPlot->graph(1)->setData(vectorKey, imuValues); 
+ui->customPlot->graph(2)->setData(vectorKey, imuValues); 
+
+ui->customPlot2->graph(0)->setData(vectorKey, imuValues); 
+ui->customPlot2->graph(1)->setData(vectorKey, imuValues); 
+ui->customPlot2->graph(2)->setData(vectorKey, imuValues); 
+
+ui->customPlot3->graph(0)->setData(vectorKey, imuValues); 
+ui->customPlot3->graph(1)->setData(vectorKey, imuValues); 
+ui->customPlot3->graph(2)->setData(vectorKey, imuValues); 
+
+escValue = false;
+}
+                  
+heading->setText(QString("TaraXL Sample IMU Application"));
 
 
 }

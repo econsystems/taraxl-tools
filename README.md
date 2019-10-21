@@ -14,7 +14,7 @@ The taraxl tools demonstrates the API feature and code.
 ## Getting started
 
 1. Download the latest version of the TaraXL SDK at https://developer.e-consystems.com
-2. Install the TaraXL SDK on you NVIDIA TX2/Xavier device/Linux x86 PC.
+2. Install the TaraXL SDK on you NVIDIA TX2/Xavier device/Nano device/Linux x86 PC.
 
 
 ## Support

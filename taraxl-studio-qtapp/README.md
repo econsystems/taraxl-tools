@@ -11,7 +11,7 @@ This tool outputs the camera left and right images, disparity map and depth map.
 ## Getting started
 
 1. Download the latest version of the TaraXL SDK at https://developer.e-consystems.com
-2. Install the TaraXL SDK on NVIDIA TX2/Xavier device/ Ubuntu x86 PC.
+2. Install the TaraXL SDK on NVIDIA TX2/Xavier device/Nano device/Ubuntu x86 PC.
 
 ## Build the application
 
@@ -30,6 +30,6 @@ To run the TaraXL Studio application, connect the TaraXL camera to TX2 device an
 For Ubuntu x86 PC/NVIDIA Jetson TX2 upto L4T 32.1 : 
 
     sudo ./taraXLStudio
-For NVIDIA Jetson TX2/Xavier from L4T 32.1 : 
+For NVIDIA Jetson TX2/Xavier/Nano from L4T 32.1 : 
 
     ./taraXLStudio

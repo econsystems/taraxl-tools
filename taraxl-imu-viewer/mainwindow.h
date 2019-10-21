@@ -35,6 +35,7 @@ private:
     QTimer dataTimer;
     int isPaussed=0;
     QLabel* heading = new QLabel;
+    bool escValue;
 
 TaraXL taraxlCam;
   TaraXLCam selectedCam;
@@ -43,6 +44,8 @@ TaraXL taraxlCam;
   TaraXLPoseTracking *taraxlpose; 
   TARAXL_STATUS_CODE status;
 struct TaraXLIMUData imuData;
+
+//QTime time;
 
   
 QCPLayoutGrid *subLayout = new QCPLayoutGrid;

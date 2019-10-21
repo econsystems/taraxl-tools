@@ -1,6 +1,6 @@
 # TaraXL Parallel viewer – A sample console application using TaraXL SDK for parallel video streams
 
-This tool lets you build and run a sample console application using TaraXL SDK on NVIDIA TX2/Xavier. The app streams the depth images of all the connected cameras and runs it parallely.
+This tool lets you build and run a sample console application using TaraXL SDK. The app streams the depth images of all the connected cameras and runs it parallely.
 
 ## Prerequisites
 
@@ -11,7 +11,7 @@ This tool lets you build and run a sample console application using TaraXL SDK o
 ## Getting started
 
 1. Download the latest version of the TaraXL SDK at https://developer.e-consystems.com
-2. Install the TaraXL SDK on NVIDIA TX2/Xavier device/ Ubuntu x86 PC.
+2. Install the TaraXL SDK on NVIDIA TX2/Xavier device/Nano device/Ubuntu x86 PC.
 
 ## Build the application
 
@@ -30,6 +30,6 @@ To run the TaraXL parallel viewer application, connect the TaraXL camera to TX2/
 For Ubuntu x86 PC/NVIDIA Jetson TX2 upto L4T 32.1 : 
 
     sudo ./taraxlparallelviewer
-For NVIDIA Jetson TX2/Xavier from L4T 32.1 : 
+For NVIDIA Jetson TX2/Xavier/Nano from L4T 32.1 : 
 
     ./taraxlparallelviewer

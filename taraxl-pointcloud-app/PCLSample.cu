@@ -307,19 +307,7 @@ int main ()
 
    	pclViewer->runOnVisualizationThreadOnce (viewerOneOff);
    	pclViewer->runOnVisualizationThread (viewerUpdate);
-
-   	while(!pclViewer->wasStopped())
-   	{
-
-    	ioMutex.lock();
-    	status =  taraxl3d->getPoints(currentCloud);
-		if (status != TARAXL_SUCCESS) 
-		{
-			cout << "Get points failed" << endl;
-      		return 1;
-  		}
-	
-    	ioMutex.unlock();
+	bool init = true;
 
 	Eigen::Affine3f Transform_Matrix = Eigen::Affine3f::Identity();
 
@@ -339,8 +327,23 @@ int main ()
         Transform_Matrix.rotate (Eigen::AngleAxisf (Rot_z, Eigen::Vector3f::UnitZ()));
 
         PointCloud<PointXYZRGB>::Ptr point_cloud_Transformed_ptr (new PointCloud<PointXYZRGB>);
-        transformPointCloud (*currentCloud, *point_cloud_Transformed_ptr, Transform_Matrix);
 
+
+   	while(!pclViewer->wasStopped())
+   	{
+	
+    	ioMutex.lock();
+    	status =  taraxl3d->getPoints(currentCloud);
+	
+		if (status != TARAXL_SUCCESS) 
+		{
+			cout << "Get points failed" << endl;
+      		return 1;
+  		}
+	
+    	ioMutex.unlock();
+
+	transformPointCloud (*currentCloud, *point_cloud_Transformed_ptr, Transform_Matrix);
         pclViewer->showCloud(point_cloud_Transformed_ptr);
 
 	}
