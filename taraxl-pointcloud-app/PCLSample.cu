@@ -76,7 +76,7 @@ void viewerUpdate (pcl::visualization::PCLVisualizer& viewer)
 	if(savePressed==0)
     {
 		viewer.updateText("Press SHIFT+S to save",20,0,15,10,10,255,"saved");  
-    } 
+    }
  
 }
 
@@ -299,14 +299,16 @@ int main ()
   	cout<< endl << " \nPress n/N to cycle through the PointCloud save formats(PLY,PCD,VTK)  "<<endl;
   	cout<< endl << " \nPress SHIFT+S to save the PointCloud in the current save format "<<endl;
 
-  	pclViewer = new pcl::visualization::CloudViewer("TaraXL Point Cloud  Viewer");
+        Points::Ptr currentCloud (new Points);
 
-	Points::Ptr currentCloud (new Points);	
 
-   	pclViewer->registerKeyboardCallback (keyboardEventOccurred, (void*)taraxl3d );
 
-   	pclViewer->runOnVisualizationThreadOnce (viewerOneOff);
-   	pclViewer->runOnVisualizationThread (viewerUpdate);
+	cout << endl << "Loading pointcloud... " << endl;
+	//Skipping initial 15 frames to allow the auto exposure to settle.
+	for(int i = 0 ; i < 15 ; i++)
+        	status =  taraxl3d->getPoints(currentCloud);
+
+
 	bool init = true;
 
 	Eigen::Affine3f Transform_Matrix = Eigen::Affine3f::Identity();
@@ -328,7 +330,19 @@ int main ()
 
         PointCloud<PointXYZRGB>::Ptr point_cloud_Transformed_ptr (new PointCloud<PointXYZRGB>);
 
+        transformPointCloud (*currentCloud, *point_cloud_Transformed_ptr, Transform_Matrix);
 
+	//Cloud viewer created
+	pclViewer = new pcl::visualization::CloudViewer("TaraXL Point Cloud  Viewer");
+
+        pclViewer->showCloud(currentCloud);
+        cout << endl << "Pointcloud loaded successfully!" << endl;
+
+        pclViewer->registerKeyboardCallback (keyboardEventOccurred, (void*)taraxl3d );
+
+        pclViewer->runOnVisualizationThreadOnce (viewerOneOff);
+        pclViewer->runOnVisualizationThread (viewerUpdate);
+	
    	while(!pclViewer->wasStopped())
    	{
 	

@@ -9,7 +9,7 @@ QT       += core gui widgets
 QT += widgets printsupport
 QT +=widgets
 
-TARGET = taraxlIMU
+TARGET = taraxlimu
 TEMPLATE = app
 
 # The following define makes your compiler emit warnings if you use

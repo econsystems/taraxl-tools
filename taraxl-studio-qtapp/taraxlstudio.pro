@@ -22,7 +22,7 @@ RESOURCES += qml.qrc
 OBJECTS_DIR=./build
 MOC_DIR=./build
 
-QMAKE_CXXFLAGS += `pkg-config --cflags glib-2.0`
+#QMAKE_CXXFLAGS += `pkg-config --cflags glib-2.0`
 
 # Additional import path used to resolve QML modules in Qt Creator's code model
 QML_IMPORT_PATH =

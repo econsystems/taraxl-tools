@@ -25,11 +25,11 @@ Open a terminal and build the package:
 
 ## Run the program
 
-To run the TaraXL Studio application, connect the TaraXL camera to TX2 device and execute the following command
+To run the TaraXL Studio application, connect the TaraXL camera to device and execute the following command
 
-For Ubuntu x86 PC/NVIDIA Jetson TX2 upto L4T 32.1 : 
+For Ubuntu x86 PC : 
 
-    sudo ./taraXLStudio
-For NVIDIA Jetson TX2/Xavier/Nano from L4T 32.1 : 
+    sudo ./taraxlstudio
+For NVIDIA Jetson boards : 
 
-    ./taraXLStudio
+    ./taraxlstudio

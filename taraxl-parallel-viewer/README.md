@@ -25,11 +25,11 @@ Open a terminal and build the package:
 
 ## Run the program
 
-To run the TaraXL parallel viewer application, connect the TaraXL camera to TX2/Xavier/Ubuntu x86 PC and execute the following command
+To run the TaraXL parallel viewer application, connect the TaraXL camera to device/PC and execute the following command
 
-For Ubuntu x86 PC/NVIDIA Jetson TX2 upto L4T 32.1 : 
+For Ubuntu x86 PC : 
 
     sudo ./taraxlparallelviewer
-For NVIDIA Jetson TX2/Xavier/Nano from L4T 32.1 : 
+For NVIDIA Jetson boards : 
 
     ./taraxlparallelviewer

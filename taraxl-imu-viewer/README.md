@@ -27,10 +27,5 @@ Open a terminal and build the package:
 
 To run the TaraXL pointcloud application, connect the TaraXL camera to device and execute the following command
 
-For Ubuntu x86 PC/NVIDIA Jetson TX2 upto L4T 32.1 : 
-
-    sudo ./taraxlIMU
-For NVIDIA Jetson TX2/Xavier/Nano from L4T 32.1 : 
-
-    ./taraxlIMU
+    sudo ./taraxlimu
 

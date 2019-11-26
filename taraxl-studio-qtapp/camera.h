@@ -69,12 +69,16 @@ public Q_SLOTS:
 
     void setAccuracyMode(const int selectedAccuracyMode);
 
+    void setDepthRange(const int selectedDepthRange);
+
     void getDepth(const int X, const int Y, const int viewerWidth, const int viewerHeight);
 
     int getCameraName();
 
 private:
     TaraXLSDK::ACCURACY_MODE m_eAccuracy;
+
+    TaraXLSDK::TARAXL_DEPTH_RANGE m_eDepthRange;
 
     int m_iNoOfCamerasConnected;
 

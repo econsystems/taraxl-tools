@@ -27,12 +27,12 @@ Open a terminal and build the package:
 
 To run the TaraXL pointcloud application, connect the TaraXL camera to device and execute the following command
 
-For Ubuntu x86 PC/NVIDIA Jetson TX2 upto L4T 32.1 : 
+For Ubuntu x86 PC  : 
 
-    sudo ./PCLSample
-For NVIDIA Jetson TX2/Xavier/Nano from L4T 32.1 : 
+    sudo ./taraxlpointcloudviewer
+For NVIDIA Jetson TX2/Xavier/Nano : 
 
-    ./PCLSample
+    ./taraxlpointcloudviewer
 
 ## Troubleshooting
 1. The following error occurs when compiling the sample applications using CUDA 9.0 :
@@ -81,7 +81,7 @@ For NVIDIA Jetson TX2/Xavier/Nano from L4T 32.1 :
     
         cd /usr/lib/aarch64-linux-gnu/
         sudo ln -sf tegra/libGL.so libGL.so
-3. The following error occurs while using Xavier/TX2
+3. The following error occurs while using CUDA 10
 
         In file included from /usr/include/eigen3/Eigen/StdVector:14:0,
                      from /usr/local/taraxl-pcl/include/pcl-1.8/pcl/pcl_base.h:49,
@@ -100,3 +100,5 @@ For NVIDIA Jetson TX2/Xavier/Nano from L4T 32.1 :
     and add the below line :
 
             #include <cuda_runtime.h>
+
+4. When the scene is not visible in the application sometimes, Press Alt + r to reset the actual view. 

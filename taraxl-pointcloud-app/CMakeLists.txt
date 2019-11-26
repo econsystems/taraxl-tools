@@ -8,7 +8,7 @@ if(COMMAND cmake_policy)
 endif(COMMAND cmake_policy)
 
 
-set(OUTPUT "PCLSample")
+set(OUTPUT "taraxlpointcloudviewer")
 set(CMAKE_BUILD_TYPE Release)
 
 #find required Packages
@@ -42,9 +42,9 @@ add_definitions(${PCL_DEFINITIONS})
 
 set_directory_properties( PROPERTIES COMPILE_DEFINITIONS "" )
 
-cuda_add_executable(PCLSample PCLSample.cu)
+cuda_add_executable(taraxlpointcloudviewer PCLSample.cu)
 
-target_link_libraries(  PCLSample
+target_link_libraries(  taraxlpointcloudviewer
 			${GLIB_LIBS}
 			${CUDA_LIBS}
 			${OpenCV_LIBS}

@@ -86,10 +86,11 @@ int main () {
   vector<Ptr<TaraXLDepth> > taraxlDepthList;
   vector<Mat> left, right, grayDisp, colorDisp, depthMap;
   TaraXLCam *selectedCam;
+  vector<string> cameraUniqueIdList;
   for(int i = 0 ; i < taraxlCamList.size() ; i++)
   {
-	  selectedCam = new TaraXLCam(taraxlCamList.at(i));
-	  status = selectedCam->connect();
+	  //selectedCam = new TaraXLCam(taraxlCamList.at(i));
+	  status = taraxlCamList.at(i).connect();
 	  if (status != TARAXL_SUCCESS) {
 
 	      cout << "Camera connect failed " << status << endl;
@@ -97,7 +98,7 @@ int main () {
 	  }
 	  Ptr<TaraXLDepth> depth;
 	  cout << "Camera connect status" << status << endl;
-	  depth = new TaraXLDepth(*selectedCam);
+	  depth = new TaraXLDepth(taraxlCamList.at(i));
   	  if (depth == NULL)
 	  {
     		cout << "Unable to create instance to TaraDepth" << endl;
@@ -106,7 +107,8 @@ int main () {
 	  depth->setAccuracy(selectedMode);
 	  taraxlDepthList.push_back(depth);
           string id;
-          selectedCam->getCameraUniqueId(id);
+          taraxlCamList.at(i).getCameraUniqueId(id);
+	  cameraUniqueIdList.push_back(id);
 	  string windowName = "CAMERA : "+ id;
 	  namedWindow(windowName, CV_WINDOW_AUTOSIZE);
 
@@ -127,7 +129,47 @@ int main () {
 
   uchar b[] = {0,0,0,0,0,0,0,0,0,0,0,0,0,0,0,0,0,0,0,0,0,0,0,0,0,0,0,0,0,0,0,0,0,0,0,0,0,0,0,0,0,0,0,0,0,0,0,0,2,10,18,26,34,42,50,58,66,74,82,90,98,106,114,122,130,138,146,154,162,170,178,186,194,202,210,218,226,234,242,250,255,255,255,255,255,255,255,255,255,255,255,255,255,255,255,255,255,255,255,255,255,255,255,255,255,255,255,255,255,255,255,255,252,244,236,228,220,212,204,196,188,180,172,164,156,148,140,132};
 
-  Mat lookUpTable_R(1, 256, CV_8U,&r), lookUpTable_G(1, 256, CV_8U,&g), lookUpTable_B(1, 256, CV_8U,&b);
+  int minDisp,maxDisp;
+  taraxlDepthList.at(0)->getMinDisparity(minDisp);
+
+  uchar r1[256],g1[256],b1[256];
+
+  for(int i = 0; i < 256 ; i++)
+  {
+        if(iAccuracyMode == 0)
+        {
+                if(i < 64)
+                {
+                        r1[i] = r1[i+1] = r[i];
+                        g1[i] = g1[i+1] = g[i];
+                        b1[i] = b1[i+1] = b[i];
+                        i++;
+                }
+                else
+                {
+                        r1[i] = r[i-32];
+                        g1[i] = g[i-32];
+                        b1[i] = b[i-32];
+                }
+        }
+        else
+        {
+                if(i <= minDisp)
+                {
+                        r1[i] = 0;
+                        g1[i] = 0;
+                        b1[i] = 0;
+                }
+                else
+                {
+                        r1[i] = r[i-minDisp];
+                        g1[i] = g[i-minDisp];
+                        b1[i] = b[i-minDisp];
+                }
+        }
+  }
+
+  Mat lookUpTable_R(1, 256, CV_8U,&r1), lookUpTable_G(1, 256, CV_8U,&g1), lookUpTable_B(1, 256, CV_8U,&b1);
   while(1)
   {
 	for(int i = 0 ; i < taraxlCamList.size() ; i++)
@@ -166,11 +208,9 @@ int main () {
     cv::merge(planes,colorDisp.at(i));
 
     cv::cvtColor(colorDisp.at(i), colorDisp.at(i), CV_RGBA2BGRA);
-    string id;
-    taraxlCamList.at(i).getCameraUniqueId(id);
 
 
-		string windowName = "CAMERA : "+ id;
+		string windowName = "CAMERA : "+ cameraUniqueIdList.at(i);
 		imshow(windowName, colorDisp.at(i));
 		waitKey(1);
 	}

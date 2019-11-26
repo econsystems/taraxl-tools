@@ -39,6 +39,18 @@ Rectangle {
     property alias ultraAccuracyChecked: ultraAccuracyRadioBtn.checked
     signal ultraAccuracyRadioBtnChecked()
 
+    property alias defaultRangeChecked: defaultRangeRadioBtn.checked
+    property alias defaultRangeEnabled: defaultRangeRadioBtn.enabled
+    signal defaultRangeRadioBtnChecked()
+
+    property alias nearRangeChecked: nearRangeRadioBtn.checked
+    property alias nearRangeEnabled: nearRangeRadioBtn.enabled
+    signal nearRangeRadioBtnChecked()
+
+    property alias veryNearRangeChecked: veryNearRangeRadioBtn.checked
+    property alias veryNearRangeEnabled: veryNearRangeRadioBtn.enabled
+    signal veryNearRangeRadioBtnChecked()
+
     property alias camCtrlRectEnabled: camCtrlsRect.enabled
     property alias algoSettingsRectEnabled: collapsedAlgoSettingsRect.enabled
 
@@ -851,7 +863,7 @@ Rectangle {
                 x: 0
                 y: algoSettingsTitleBarRect.height
                 width: parent.width
-                height: settingsGrid.height * 0.14
+                height: settingsGrid.height * 0.40
 
                 color: "#444444"
 
@@ -859,13 +871,31 @@ Rectangle {
 
                     id: algoSettingsGrp
                 }
+                Text {
 
+                    id: algorithmModeText
+
+                    x: 15
+                    anchors.top: parent.top
+                    anchors.topMargin: 15
+
+                    width: parent.width - x
+
+                    text: qsTr("Algorithm mode")
+                    horizontalAlignment: Text.AlignLeft
+                    verticalAlignment: Text.AlignTop
+                    color: "white"
+                    font.family: "arial"
+                    font.bold: true
+                    font.pixelSize: parent.width * 0.06
+                }
                 RadioButton {
 
                     id: highFpsRadioBtn
 
                     x: parent.width * 0.20
-                    anchors.top: parent.top
+                    
+                    anchors.top: algorithmModeText.bottom
                     anchors.topMargin: 15
 
                     width: parent.width * 0.60
@@ -1017,7 +1047,186 @@ Rectangle {
                         }
                     }
                 }
+                ExclusiveGroup {
 
+                    id: rangeSettingsGroup
+                }
+                Text {
+
+                    id: depthRangeText
+
+                    x: 15
+                    anchors.top: ultraAccuracyRadioBtn.bottom
+                    anchors.topMargin: 15
+
+                    width: parent.width - x
+
+                    text: qsTr("Depth range")
+                    horizontalAlignment: Text.AlignLeft
+                    verticalAlignment: Text.AlignTop
+                    color: "white"
+                    font.family: "arial"
+                    font.bold: true
+                    font.pixelSize: parent.width * 0.06
+                }
+                RadioButton {
+
+                    id: defaultRangeRadioBtn
+
+                    x: parent.width * 0.20
+                    
+                    anchors.top: depthRangeText.bottom
+                    anchors.topMargin: 15
+
+                    width: parent.width * 0.60
+
+                    style: RadioButtonStyle {
+
+                        spacing: 10
+                        label: Text {
+
+                            text: qsTr("Default Range")
+                            horizontalAlignment: Text.AlignLeft
+                            verticalAlignment: Text.AlignVCenter
+                            color: parent.enabled? "white" : "gray"
+                            font.family: "arial"
+                            font.pixelSize: algoSettingsRect.width * 0.06
+                        }
+
+                        indicator: Rectangle {
+
+                            implicitWidth: 15
+                            implicitHeight: 15
+                            radius: 8
+                            border.color: control.activeFocus ? "darkblue" : "gray"
+                            border.width: 1
+
+                            Rectangle {
+
+                                anchors.fill: parent
+                                visible: control.checked
+                                color: "#555"
+                                radius: 9
+                                anchors.margins: 4
+                            }
+                        }
+                    }
+                    exclusiveGroup: rangeSettingsGroup
+                    checked: defaultRangeChecked
+			
+                    onCheckedChanged: {
+
+                        if (checked) {
+
+                            defaultRangeRadioBtnChecked()
+                        }
+                    }
+                }
+
+                RadioButton {
+
+                    id: nearRangeRadioBtn
+
+                    x: parent.width * 0.20
+                    anchors.top: defaultRangeRadioBtn.bottom
+                    anchors.topMargin: 15
+
+                    width: parent.width * 0.60
+
+                    style: RadioButtonStyle {
+
+                        spacing: 10
+                        label: Text {
+
+                            text: qsTr("Near range")
+                            horizontalAlignment: Text.AlignLeft
+                            verticalAlignment: Text.AlignVCenter
+                            color: parent.enabled? "white" : "gray"
+                            font.family: "arial"
+                            font.pixelSize: algoSettingsRect.width * 0.06
+                        }
+
+                        indicator: Rectangle {
+
+                            implicitWidth: 15
+                            implicitHeight: 15
+                            radius: 8
+                            border.color: control.activeFocus ? "darkblue" : "gray"
+                            border.width: 1
+
+                            Rectangle {
+
+                                anchors.fill: parent
+                                visible: control.checked
+                                color: "#555"
+                                radius: 9
+                                anchors.margins: 4
+                            }
+                        }
+                    }
+                    exclusiveGroup: rangeSettingsGroup
+                    checked: nearRangeChecked
+
+                    onCheckedChanged: {
+
+                        if(checked) {
+
+                            nearRangeRadioBtnChecked()
+                        }
+                    }
+                }
+                RadioButton {
+
+                    id: veryNearRangeRadioBtn
+
+                    x: parent.width * 0.20
+                    anchors.top: nearRangeRadioBtn.bottom
+                    anchors.topMargin: 15
+
+                    width: parent.width * 0.60
+
+                    style: RadioButtonStyle {
+
+                        spacing: 10
+                        label: Text {
+
+                            text: qsTr("Very near range")
+                            horizontalAlignment: Text.AlignLeft
+                            verticalAlignment: Text.AlignVCenter
+                            color: parent.enabled? "white" : "gray"
+                            font.family: "arial"
+                            font.pixelSize: algoSettingsRect.width * 0.06
+                        }
+
+                        indicator: Rectangle {
+
+                            implicitWidth: 15
+                            implicitHeight: 15
+                            radius: 8
+                            border.color: control.activeFocus ? "darkblue" : "gray"
+                            border.width: 1
+
+                            Rectangle {
+
+                                anchors.fill: parent
+                                visible: control.checked
+                                color: "#555"
+                                radius: 9
+                                anchors.margins: 4
+                            }
+                        }
+                    }
+                    exclusiveGroup: rangeSettingsGroup
+                    checked: veryNearRangeChecked
+
+                    onCheckedChanged: {
+
+                        if(checked) {
+
+                            veryNearRangeRadioBtnChecked()
+                        }
+                    }
+                }
                 onVisibleChanged: {
 
                     collapsedAlgoSettingsRect.visible = !visible

@@ -92,7 +92,7 @@ Rectangle {
 
                 cam.getSupportedResolutions()
                 settings.highAccuracyChecked = true
-
+		settings.defaultRangeChecked = true
 		if(camState == 0)
                 cam.startPreview()
 
@@ -244,7 +244,6 @@ Rectangle {
 
         onExposureChanged: {
 
-
             cam.setExposureVal(value)
             mainWnd.focus = true
         }
@@ -276,20 +275,45 @@ Rectangle {
 		}
             }
         }
-
         onHighAccuracyRadioBtnChecked: {
 
             cam.setAccuracyMode(0)
+	    settings.defaultRangeEnabled = false
+	    settings.nearRangeEnabled = false
+	    settings.veryNearRangeEnabled = false
         }
 
         onHighFpsRadioBtnChecked: {
 
             cam.setAccuracyMode(1)
+	    settings.defaultRangeEnabled = false
+	    settings.nearRangeEnabled = false
+	    settings.veryNearRangeEnabled = false
         }
 
         onUltraAccuracyRadioBtnChecked: {
 
             cam.setAccuracyMode(2)
+	    settings.defaultRangeEnabled = true
+	    settings.nearRangeEnabled = true
+	    settings.veryNearRangeEnabled = true
+        }
+	onDefaultRangeRadioBtnChecked: {
+
+	    if(settings.ultraAccuracyChecked == true)
+	            cam.setDepthRange(0)
+        }
+
+        onNearRangeRadioBtnChecked: {
+
+	    if(settings.ultraAccuracyChecked == true)
+	            cam.setDepthRange(1)
+        }
+
+        onVeryNearRangeRadioBtnChecked: {
+
+	    if(settings.ultraAccuracyChecked == true)
+	            cam.setDepthRange(2)
         }
     }
 

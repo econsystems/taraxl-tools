@@ -15,7 +15,7 @@ camera::camera() {
 
   m_pImgProvider = ImageProvider::getInstance();
   m_bGetDepth = false;
-  m_bIsCameraConnected = false; 
+  m_bIsCameraConnected = false;
   initializedFlag = true;
 }
 
@@ -178,12 +178,12 @@ void camera::connectCamera(const int index) {
   TARAXL_STATUS_CODE status;
   if(m_bIsCameraConnected)
   {
-      status = m_selectedCam.disconnect();
-      if (status == TARAXL_SUCCESS) {
+    status = m_selectedCam.disconnect();
+    if (status == TARAXL_SUCCESS) {
 
-        cout << "disconnect success" << endl;
-        setCamConnected(false);
-      }
+      cout << "disconnect success" << endl;
+      setCamConnected(false);
+    }
   }
   if (m_iNoOfCamerasConnected == 0) {
 
@@ -306,26 +306,68 @@ void camera::previewThread() {
   Mat cdr, cdg, cdb;
   //COLORMAP JET LUT
 
+
+
+
+  while (1) {
+
+
+  int minDisp,maxDisp;
+  m_taraDepth->getMinDisparity(minDisp);
+  m_taraDepth->getMaxDisparity(maxDisp);
+
+
+
   uchar r[] = {128,136,144,152,160,168,176,184,192,200,208,216,224,232,240,248,255,255,255,255,255,255,255,255,255,255,255,255,255,255,255,255,255,255,255,255,255,255,255,255,255,255,255,255,255,255,255,255,254,246,238,230,222,214,206,198,190,182,174,166,158,150,142,134,126,118,110,102,94,86,78,70,62,54,46,38,30,22,14,6,0,0,0,0,0,0,0,0,0,0,0,0,0,0,0,0,0,0,0,0,0,0,0,0,0,0,0,0,0,0,0,0,0,0,0,0,0,0,0,0,0,0,0,0,0,0,0,0};
 
   uchar g[] = {0,0,0,0,0,0,0,0,0,0,0,0,0,0,0,0,0,8,16,24,32,40,48,56,64,72,80,88,96,104,112,120,128,136,144,152,160,168,176,184,192,200,208,216,224,232,240,248,255,255,255,255,255,255,255,255,255,255,255,255,255,255,255,255,255,255,255,255,255,255,255,255,255,255,255,255,255,255,255,255,252,244,236,228,220,212,204,196,188,180,172,164,156,148,140,132,124,116,108,100,92,84,76,68,60,52,44,36,28,20,12,4,0,0,0,0,0,0,0,0,0,0,0,0,0,0,0,0};
 
-  uchar b[] = {0,0,0,0,0,0,0,0,0,0,0,0,0,0,0,0,0,0,0,0,0,0,0,0,0,0,0,0,0,0,0,0,0,0,0,0,0,0,0,0,0,0,0,0,0,0,0,0,2,10,18,26,34,42,50,58,66,74,82,90,98,106,114,122,130,138,146,154,162,170,178,186,194,202,210,218,226,234,242,250,255,255,255,255,255,255,255,255,255,255,255,255,255,255,255,255,255,255,255,255,255,255,255,255,255,255,255,255,255,255,255,255,252,244,236,228,220,212,204,196,188,180,172,164,156,148,140,132};
+ uchar b[] = {0,0,0,0,0,0,0,0,0,0,0,0,0,0,0,0,0,0,0,0,0,0,0,0,0,0,0,0,0,0,0,0,0,0,0,0,0,0,0,0,0,0,0,0,0,0,0,0,2,10,18,26,34,42,50,58,66,74,82,90,98,106,114,122,130,138,146,154,162,170,178,186,194,202,210,218,226,234,242,250,255,255,255,255,255,255,255,255,255,255,255,255,255,255,255,255,255,255,255,255,255,255,255,255,255,255,255,255,255,255,255,255,252,244,236,228,220,212,204,196,188,180,172,164,156,148,140,132};
 
-  uchar r1[] = {128,144,160,176,192,208,224,240,255,255,255,255,255,255,255,255,255,255,255,255,255,255,255,255,254,238,222,206,190,174,158,142,126,110,94,78,62,46,30,14,0,0,0,0,0,0,0,0,0,0,0,0,0,0,0,0,0,0,0,0,0,0,0,0};
 
-  uchar g1[] = {0,0,0,0,0,0,0,0,0,16,32,48,64,80,96,112,128,144,160,176,192,208,224,240,255,255,255,255,255,255,255,255,255,255,255,255,255,255,255,255,252,236,220,204,188,172,156,140,124,108,92,76,60,44,28,12,0,0,0,0,0,0,0,0};
+  uchar r1[256],g1[256],b1[256]; 
 
-  uchar b1[] = {0,0,0,0,0,0,0,0,0,0,0,0,0,0,0,0,0,0,0,0,0,0,0,0,2,18,34,50,66,82,98,114,130,146,162,178,194,210,226,242,255,255,255,255,255,255,255,255,255,255,255,255,255,255,255,255,252,236,220,204,188,172,156,140};
-
-  Mat lookUpTable_R(1, 256, CV_8U,&r), lookUpTable_G(1, 256, CV_8U,&g), lookUpTable_B(1, 256, CV_8U,&b);
-  Mat lookUpTable_R1(1, 256, CV_8U,&r1), lookUpTable_G1(1, 256, CV_8U,&g1), lookUpTable_B1(1, 256, CV_8U,&b1);
-
-  while (1) {
+  for(int i = 0; i < 256 ; i++)
+  {
+	if(m_eAccuracy == HIGH)
+	{
+		if(i < 64)
+		{
+                        r1[i] = r1[i+1] = r[i];
+                        g1[i] = g1[i+1] = g[i];
+                        b1[i] = b1[i+1] = b[i];   
+                        i++;
+		}
+		else
+		{
+			r1[i] = r[i-32];
+			g1[i] = g[i-32];
+			b1[i] = b[i-32];
+		}
+	}
+	else
+	{
+		if(i <= minDisp)
+		{
+			r1[i] = 0;
+			g1[i] = 0;
+			b1[i] = 0; 
+		}
+		else
+		{
+			r1[i] = r[i-minDisp];
+			g1[i] = g[i-minDisp];
+			b1[i] = b[i-minDisp]; 
+		}
+	}
+  }
+  
+  Mat lookUpTable_R(1, 256, CV_8U,&r1), lookUpTable_G(1, 256, CV_8U,&g1), lookUpTable_B(1, 256, CV_8U,&b1);
 
     gettimeofday(&totalStart, 0);
     if (m_taraDepth != NULL) {
         pthread_mutex_lock(&g_mtx_depth);
+
       m_taraDepth->getMap(left, right, disp0, true, depthMap, false, TARAXL_DEFAULT_FILTER);
         pthread_mutex_unlock(&g_mtx_depth);
     }
@@ -398,7 +440,7 @@ void camera::previewThread() {
       setDepth(QString(" %1 ").arg(QString::number(depthValueInM, 'f', 2)));
       else
       setDepth(QString(" %1 m ").arg(QString::number(depthValueInM, 'f', 2)));
-
+	
     }
     pthread_mutex_unlock(&g_mtx);
     setLeftImage(left);
@@ -479,7 +521,6 @@ void camera::setResolution(int index) {
       cout << "setResolution success" << endl;
     }
   }
-
   pthread_mutex_unlock(&g_mtx_depth);
 }
 
@@ -615,7 +656,52 @@ void camera::enableAutoExposure() {
     cout << "enableAutoExposure failed: " << status << endl;
   }
 }
+void camera::setDepthRange(const int selectedDepthRange)
+{
+  if ((!m_bIsCameraConnected) || (m_taraDepth == NULL)) {
+    return;
+  }
+  string name;
+  m_selectedCam.getFriendlyName(name);
+     pthread_mutex_lock(&g_mtx_depth);
+  TARAXL_STATUS_CODE status;
+  switch (selectedDepthRange) {
+    case 0:
+    status = m_taraDepth->setDepthRange(TARAXL_DEFAULT_RANGE);
+    break;
+    case 1:
+    status = m_taraDepth->setDepthRange(TARAXL_NEAR_RANGE);
+    break;
+    case 2:
+    status = m_taraDepth->setDepthRange(TARAXL_VERY_NEAR_RANGE);
+    break;
+    default:
+    status = m_taraDepth->setDepthRange(TARAXL_DEFAULT_RANGE);
+  }
+    pthread_mutex_unlock(&g_mtx_depth);
+  if (status == TARAXL_SUCCESS) {
+    cout << "selectedDepthRange success" << endl;
+    pthread_mutex_lock(&g_mtx);
 
+    switch (selectedDepthRange) {
+      case 0:
+      m_eDepthRange = TARAXL_DEFAULT_RANGE;
+      break;
+      case 1:
+      m_eDepthRange = TARAXL_NEAR_RANGE;
+      break;
+      case 2:
+      m_eDepthRange = TARAXL_VERY_NEAR_RANGE;
+      break;
+      default:
+      m_eDepthRange = TARAXL_DEFAULT_RANGE;
+    }
+    pthread_mutex_unlock(&g_mtx);
+  }
+  else {
+    cout << "selectedDepthRange failed" << endl;
+  }
+}
 void camera::setAccuracyMode(const int selectedAccuracyMode) {
 
   if ((!m_bIsCameraConnected) || (m_taraDepth == NULL)) {
